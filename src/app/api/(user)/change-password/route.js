@@ -14,7 +14,7 @@ export async function POST(req) {
   try {
     const { oldPassword, newPassword } = await req.json();
     if (!oldPassword || !oldPassword) {
-      throw ApiError("error in password request", 401);
+      throw new ApiError("error in password request", 401);
     }
 
     const userId = session?._id;
@@ -22,12 +22,12 @@ export async function POST(req) {
     const user = await UserModel.findById(userId);
 
     if (!user) {
-      throw ApiError("User was not authorize", 500);
+      throw new ApiError("User was not authorize", 500);
     }
     const isPasswordValid = bcrypt.compare(oldPassword, user.password);
 
     if (!isPasswordValid) {
-      throw ApiError("password was incorrect", 401);
+      throw new ApiError("password was incorrect", 401);
     }
 
     const encryptPassword = bcrypt.hash(newPassword, 10);

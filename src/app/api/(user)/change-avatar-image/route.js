@@ -5,12 +5,18 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/option";
 import { dbconnect } from "@/lib/dbconnect";
 import UserModel from "@/models/users.model";
+import { ApiResponse } from "@/utils/ApiResponse";
 
 export async function POST(req) {
   await dbconnect();
 
   try {
-    const { avatarImage } = await req.formData();
+    const formData = await req.formData();
+
+    const data = Object.fromEntries(formData.entries());
+
+    const { avatarImage } = data;
+
     if (!avatarImage) {
       throw new ApiError("avatarImage is missing", 404);
     }
@@ -31,7 +37,7 @@ export async function POST(req) {
     if (!user) {
       throw new ApiError("User not found ", 500);
     }
-    user.avatar = avatarUpload;
+    user.avatar = avatarUpload.secure_url;
     const changeAvatar = await user.save({ validateBeforeSave: false });
 
     if (!changeAvatar) {

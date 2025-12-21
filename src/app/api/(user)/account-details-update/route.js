@@ -8,7 +8,6 @@ import { ApiResponse } from "@/utils/ApiResponse";
 
 export async function POST(req) {
   await dbconnect();
-  const session = await getServerSession(authOptions);
 
   try {
     const { fullName, email } = await req.json();
@@ -16,12 +15,16 @@ export async function POST(req) {
     if (!fullName || !email) {
       throw new ApiError("Email and fullname are missing", 401);
     }
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new ApiError("user was not authorize", 404);
+    }
     const userId = session._id;
 
-    const user = UserModel.findOne({ email: email });
+    const user = await UserModel.findById(userId);
 
     if (!user) {
-      throw new ApiError("user was not authorize", 404);
+      throw new ApiError("user not found", 404);
     }
     user.email = email;
     user.fullName = fullName;

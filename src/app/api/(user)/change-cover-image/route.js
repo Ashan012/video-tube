@@ -5,12 +5,18 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/option";
 import { dbconnect } from "@/lib/dbconnect";
 import UserModel from "@/models/users.model";
+import { ApiResponse } from "@/utils/ApiResponse";
 
 export async function POST(req) {
   await dbconnect();
 
   try {
-    const { coverImage } = await req.formData();
+    const formData = await req.formData();
+
+    const data = Object.fromEntries(formData.entries());
+
+    const { coverImage } = data;
+
     if (!coverImage) {
       throw new ApiError("coverImage is missing", 404);
     }
@@ -24,14 +30,14 @@ export async function POST(req) {
     const coverImageUpload = await cloudinaryUpload(coverImage);
 
     if (!coverImageUpload) {
-      throw new ApiError(coverImageUpload || "coverImage upload failed");
+      throw new ApiError("coverImage upload failed", 500);
     }
 
     const user = await UserModel.findById(userId);
     if (!user) {
       throw new ApiError("User not found ", 500);
     }
-    user.coverImage = coverImageUpload;
+    user.coverImage = coverImageUpload.secure_url;
     const changeCoverImage = await user.save({ validateBeforeSave: false });
 
     if (!changeCoverImage) {
@@ -48,8 +54,8 @@ export async function POST(req) {
     return NextResponse.json(
       {
         success: false,
-        message: error?.message,
-        status: error?.status,
+        message: error?.message || "error on coverimage upload",
+        status: error?.status || 400,
       },
       {
         status: error?.status || 400,

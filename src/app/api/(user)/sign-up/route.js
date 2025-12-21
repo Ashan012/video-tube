@@ -11,7 +11,7 @@ export async function POST(req) {
   try {
     const formData = await req.formData();
     const data = Object.fromEntries(formData.entries());
-    console.log(data);
+
     const { username, email, fullName, password, avatar, coverImage } = data;
 
     if (
@@ -38,8 +38,8 @@ export async function POST(req) {
       email,
       password: hashPassword,
       fullName,
-      avatar: avatarUpload,
-      coverImage: coverImageUpload || "",
+      avatar: avatarUpload.secure_url,
+      coverImage: coverImageUpload.secure_url || "",
     });
 
     if (user) {

@@ -5,7 +5,7 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-export const cloudinaryUpload = async (file) => {
+export const cloudinaryUpload = async (file, type, folder) => {
   if (!file) throw new Error("No file provided");
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -13,13 +13,13 @@ export const cloudinaryUpload = async (file) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader
       .upload_stream(
-        { folder: "userImage", resource_type: "auto" },
+        { folder: folder || "userImage", resource_type: type || "image" },
         (error, result) => {
           if (error) return reject(error);
           if (!result?.secure_url)
             return reject(new Error("Cloudinary upload failed"));
 
-          resolve(result.secure_url);
+          resolve(result);
         }
       )
       .end(buffer);

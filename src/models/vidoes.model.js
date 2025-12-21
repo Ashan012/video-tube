@@ -13,6 +13,7 @@ const videoSchema = new Schema(
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     title: {
       type: String,
@@ -24,17 +25,20 @@ const videoSchema = new Schema(
     },
     duration: {
       type: Number,
+      default: 0,
     },
     views: {
       type: Number,
+      default: 0,
     },
     isPublished: {
       type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }
 );
-const videoModel =
-  mongoose.models.Video || new mongoose.model("Video", videoSchema);
+const VideoModel =
+  mongoose.models.Video || mongoose.model("Video", videoSchema);
 
-export default videoModel;
+export default VideoModel;
