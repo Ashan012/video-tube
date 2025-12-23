@@ -2,7 +2,13 @@ import { dbconnect } from "@/lib/dbconnect";
 import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
+import {
+  cloudinaryDeleteResource,
+  cloudinaryUpload,
+  extractPublicId,
+} from "@/utils/cloudinaryUpload";
 import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
   await dbconnect();
@@ -20,15 +26,43 @@ export async function POST(req) {
 
     const updateVideoDetails = await VideoModel.findByIdAndUpdate(
       videoId,
+
       {
         $set: {
-          thumbnail: thumbnailUpload,
+          thumbnail: thumbnailUpload.secure_url,
           title,
           description,
         },
       },
       { new: true }
     );
+
+    //later on if i don't need updated video on frontend so i utilize this option
+    // const updateVideoDetails = await VideoModel.findOneAndUpdate(
+    //   { _id: videoId },
+
+    //   {
+    //     $set: {
+    //       thumbnail: thumbnailUpload.secure_url,
+    //       title,
+    //       description,
+    //     },
+    //   },
+
+    //   { returnDocument: "before" }
+    // );
+
+    // const thumbnailPublicId = updateVideoDetails.thumbnail;
+
+    // const publicId = extractPublicId(thumbnailPublicId);
+
+    // const deleteCloudinaryOldResource = await cloudinaryDeleteResource(
+    //   publicId
+    // );
+
+    // if (!deleteCloudinaryOldResource) {
+    //   throw new ApiError("failed to delete old resource");
+    // }
 
     if (!updateVideoDetails) {
       throw new ApiError("error on update video details", 500);

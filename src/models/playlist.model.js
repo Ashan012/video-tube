@@ -26,6 +26,6 @@ const playListSchema = new Schema(
   { timestamps: true }
 );
 const playlistModel =
-  mongoose.models.Playlist || new mongoose.model("Playlist", playListSchema);
+  mongoose.models.Playlist || mongoose.model("Playlist", playListSchema);
 
 export default playlistModel;
