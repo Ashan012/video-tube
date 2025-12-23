@@ -4,24 +4,28 @@ import { isValidObjectId } from "mongoose";
 import commentModel from "@/models/comments.model";
 import { ApiResponse } from "@/utils/ApiResponse";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../(user)/auth/[...nextauth]/option";
+import tweetModel from "@/models/tweet.model";
 
-export async function GET(req) {
+export async function GET() {
   await dbconnect();
   try {
-    const { videoId } = await req.json();
+    const session = await getServerSession(authOptions);
 
-    if (!isValidObjectId(videoId)) {
-      throw new ApiError("videoID is not valid", 401);
+    if (!session) {
+      throw new ApiError("user was not authorize", 404);
     }
+    const userId = session?._id;
 
-    const getAllComment = await commentModel.find({ video: videoId });
+    const getAllTweets = await tweetModel.find({ owner: userId });
 
-    if (!getAllComment) {
-      throw new ApiError("Error on get all comment  in db", 500);
+    if (!getAllTweets) {
+      throw new ApiError("Error on get all tweets  in db", 500);
     }
 
     return NextResponse.json(
-      new ApiResponse(true, "get all comment successfully", 200, getAllComment),
+      new ApiResponse(true, "get all tweets successfully", 200, getAllTweets),
       {
         status: 200,
       }
@@ -32,7 +36,7 @@ export async function GET(req) {
     return NextResponse.json(
       {
         success: false,
-        message: error?.message || "error on add comment route ",
+        message: error?.message || "error on get all tweets route ",
         status: error?.status || 400,
       },
       {
