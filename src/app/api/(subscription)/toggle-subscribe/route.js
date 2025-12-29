@@ -6,16 +6,13 @@ import { dbconnect } from "@/lib/dbconnect";
 import { NextResponse } from "next/server";
 import subscriptionModel from "@/models/subscriptions.model";
 import { ApiResponse } from "@/utils/ApiResponse";
-import VideoModel from "@/models/vidoes.model";
 
 export async function POST(req) {
   await dbconnect();
   try {
-    const { searchParams } = new URL(req.url);
+    const { channelOwnerId, unSubscribe } = await req.json();
 
-    const channelId = searchParams.get("channelId");
-
-    if (!isValidObjectId(channelId)) {
+    if (!isValidObjectId(channelOwnerId)) {
       throw new ApiError("isnot valid objectID", 400);
     }
 
@@ -26,27 +23,43 @@ export async function POST(req) {
     }
     const userId = session._id;
 
-    const channelOwner = await VideoModel.findById(channelId);
-
-    if (!channelOwner) {
-      throw new ApiError("error on get channel owner", 501);
-    }
-
-    const subscribe = await subscriptionModel.create({
-      subscriber: userId,
-      channel: channelOwner?.owner,
-    });
-
-    if (!subscribe) {
-      throw new ApiError("error on db during subscription", 500);
-    }
-
-    return NextResponse.json(
-      new ApiResponse(true, "toggle subscribe successfully", 200),
-      {
-        status: 200,
+    if (unSubscribe) {
+      const unSubscribe = await subscriptionModel.findOneAndDelete({
+        subscriber: userId,
+        channel: channelOwnerId,
+      });
+      if (!unSubscribe) {
+        throw new ApiError("error on db during unSubscribe", 500);
       }
-    );
+
+      return NextResponse.json(
+        new ApiResponse(
+          true,
+          "toggle unSubscribe successfully",
+          200,
+          unSubscribe
+        ),
+        {
+          status: 200,
+        }
+      );
+    } else {
+      const subscribe = await subscriptionModel.create({
+        subscriber: userId,
+        channel: channelOwnerId,
+      });
+
+      if (!subscribe) {
+        throw new ApiError("error on db during subscription", 500);
+      }
+
+      return NextResponse.json(
+        new ApiResponse(true, "toggle subscribe successfully", 200, subscribe),
+        {
+          status: 200,
+        }
+      );
+    }
   } catch (error) {
     console.error(error?.message || error);
 

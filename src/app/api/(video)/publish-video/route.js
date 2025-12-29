@@ -47,6 +47,7 @@ export async function POST(req) {
         success: true,
         message: "upload video successfully",
         status: 200,
+        data: createVideo,
       },
       {
         status: 200,

@@ -13,30 +13,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signInSchema } from "@/Schema/userValidation/userSchema";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { changePasswordSchema } from "@/Schema/userValidation/userSchema";
+import { useState } from "react";
+import axios from "axios";
 
-export default function SignInPage() {
-  const router = useRouter();
+export default function changePassword() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm({
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(changePasswordSchema),
   });
 
   const onSubmit = async (data) => {
     console.log(data);
+    setIsSubmitting(true);
     try {
-      const response = await signIn("credentials", {
-        redirect: false,
-        username: data.username,
-        password: data.password,
-      });
-      if (response.url) {
+      const response = await axios.post(`/api/change-password`, data);
+      if (response) {
         console.log(response);
-        router.replace("/");
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   return (
@@ -44,21 +42,7 @@ export default function SignInPage() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Text" {...field} />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
+          name="oldPassword"
           render={({ field }) => (
             <FormItem>
               <FormLabel>password</FormLabel>
@@ -70,7 +54,27 @@ export default function SignInPage() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <FormField
+          control={form.control}
+          name="newPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="password" {...field} />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {isSubmitting ? (
+          <Button type="submit">Submit</Button>
+        ) : (
+          <Button type="submit" disabled>
+            Submit
+          </Button>
+        )}
       </form>
     </Form>
   );

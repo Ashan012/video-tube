@@ -33,18 +33,25 @@ export async function POST(req) {
       throw new ApiError("coverImage upload failed", 500);
     }
 
-    const user = await UserModel.findById(userId);
-    if (!user) {
+    const changeCoverImage = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          coverImage: coverImageUpload.secure_url,
+        },
+      },
+      { new: true }
+    );
+    if (!changeCoverImage) {
       throw new ApiError("User not found ", 500);
     }
-    user.coverImage = coverImageUpload.secure_url;
-    const changeCoverImage = await user.save({ validateBeforeSave: false });
-
-    if (!changeCoverImage) {
-      throw new ApiError("coverImage upload failed", 500);
-    }
     return NextResponse.json(
-      new ApiResponse(true, "coverImage chnage successfully", 200),
+      new ApiResponse(
+        true,
+        "coverImage chnage successfully",
+        200,
+        changeCoverImage
+      ),
       {
         status: 200,
       }

@@ -7,27 +7,23 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 export async function POST(req) {
-  dbconnect();
+  await dbconnect();
   try {
     const formData = await req.formData();
     const data = Object.fromEntries(formData.entries());
 
     const { username, email, fullName, password, avatar, coverImage } = data;
 
-    if (
-      !username ||
-      !email ||
-      !fullName ||
-      !password ||
-      !avatar ||
-      !coverImage
-    ) {
+    if (!username || !email || !fullName || !password || !avatar) {
       throw new ApiError("All feilds are reuired", 401);
     }
     const hashPassword = await bcrypt.hash(password, 10);
 
     const avatarUpload = await cloudinaryUpload(avatar);
-    const coverImageUpload = await cloudinaryUpload(coverImage);
+    let coverImageUpload;
+    if (coverImage) {
+      coverImageUpload = await cloudinaryUpload(coverImage);
+    }
 
     if (!avatarUpload) {
       throw new ApiError("avatar upload failed", 401);

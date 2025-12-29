@@ -8,13 +8,16 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   await dbconnect();
   try {
-    const { videoId } = await req.json();
+    const { searchParams } = new URL(req.url);
+    const videoId = searchParams.get("videoId");
 
     if (!isValidObjectId(videoId)) {
       throw new ApiError("videoID is not valid", 401);
     }
 
-    const getAllComment = await commentModel.find({ video: videoId });
+    const getAllComment = await commentModel
+      .find({ video: videoId })
+      .populate("owner", "avatar fullName");
 
     if (!getAllComment) {
       throw new ApiError("Error on get all comment  in db", 500);

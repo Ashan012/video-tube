@@ -33,18 +33,21 @@ export async function POST(req) {
       throw new ApiError(avatarUpload || "avatar upload failed");
     }
 
-    const user = await UserModel.findById(userId);
-    if (!user) {
+    const changeAvatar = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          avatar: avatarUpload.secure_url,
+        },
+      },
+      { new: true }
+    );
+    if (!changeAvatar) {
       throw new ApiError("User not found ", 500);
     }
-    user.avatar = avatarUpload.secure_url;
-    const changeAvatar = await user.save({ validateBeforeSave: false });
 
-    if (!changeAvatar) {
-      throw new ApiError("Avatar upload failed", 500);
-    }
     return NextResponse.json(
-      new ApiResponse(true, "Avatar chnage successfully", 200),
+      new ApiResponse(true, "Avatar chnage successfully", 200, changeAvatar),
       {
         status: 200,
       }
@@ -54,8 +57,8 @@ export async function POST(req) {
     return NextResponse.json(
       {
         success: false,
-        message: error?.message,
-        status: error?.status,
+        message: error?.message || "errpr on change avatar image",
+        status: error?.status || 400,
       },
       {
         status: error?.status || 400,

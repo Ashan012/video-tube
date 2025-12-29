@@ -1,65 +1,113 @@
-import Image from "next/image";
+"use client";
+import axios from "axios";
+import NavBar from "../components/customComp/navBar.jsx";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [video, setVideo] = useState([]);
+  const [user, setUser] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const getAllVideos = async () => {
+      try {
+        const res = await axios.get("/api/get-all-videos");
+        setVideo(res.data.data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const getCurrentUser = async () => {
+      try {
+        const res = await axios.get("/api/get-current-user");
+        setUser(res.data.data.user.email);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    getAllVideos();
+    getCurrentUser();
+  }, []);
+
+  const getVideoById = (id) => {
+    router.push(`/v/${id}`);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="h-screen flex flex-col">
+      <NavBar username={user} />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-60 border-r px-3 py-4 flex flex-col justify-between">
+          <div className="flex flex-col gap-2 text-sm">
+            {[
+              "Home",
+              "Liked Videos",
+              "History",
+              "My Content",
+              "Collection",
+              "Subscribers",
+            ].map((item) => (
+              <div
+                key={item}
+                className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer"
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-2 text-sm">
+            <div className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer">
+              Support
+            </div>
+            <div className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer">
+              Settings
+            </div>
+          </div>
+        </aside>
+
+        {/* Videos */}
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="flex flex-wrap gap-6">
+            {video.map((c) => (
+              <div
+                key={c._id}
+                onClick={() => getVideoById(c._id)}
+                className="w-72 cursor-pointer hover:scale-[1.02] transition"
+              >
+                {/* Thumbnail */}
+                <div className="w-full h-40 rounded overflow-hidden bg-gray-200">
+                  <img
+                    src={c.thumbnail}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="flex gap-3 mt-3">
+                  <img
+                    src={c.owner.avatar}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+
+                  <div className="text-sm">
+                    <h4 className="font-medium line-clamp-2">{c.title}</h4>
+                    <p className="text-gray-600">{c.owner.fullName}</p>
+                    <p className="text-gray-500 text-xs">
+                      {c.views} views • 44 minutes ago
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

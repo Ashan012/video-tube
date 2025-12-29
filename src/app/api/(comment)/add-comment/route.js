@@ -31,12 +31,16 @@ export async function POST(req) {
       owner: userId,
     });
 
-    if (!addComment) {
+    const populateComment = await addComment.populate(
+      "owner",
+      "fullName avatar"
+    );
+    if (!populateComment) {
       throw new ApiError("Error on add comment save in db", 500);
     }
 
     return NextResponse.json(
-      new ApiResponse(true, "add comment successfully", 200, addComment),
+      new ApiResponse(true, "add comment successfully", 200, populateComment),
       {
         status: 200,
       }

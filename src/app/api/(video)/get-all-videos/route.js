@@ -1,4 +1,5 @@
 import { dbconnect } from "@/lib/dbconnect";
+import UserModel from "@/models/users.model";
 import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
@@ -7,7 +8,10 @@ import { NextResponse } from "next/server";
 export async function GET() {
   await dbconnect();
   try {
-    const allVideo = await VideoModel.find().lean();
+    const allVideo = await VideoModel.find()
+      .select("-videoFile")
+      .populate("owner", "avatar fullName")
+      .lean();
 
     if (!allVideo) {
       throw new ApiError("cannot fetch all video", 500);

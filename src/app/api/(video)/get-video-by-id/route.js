@@ -3,6 +3,10 @@ import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
 import { isValidObjectId } from "mongoose";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import { authOptions } from "../../(user)/auth/[...nextauth]/option";
+import UserModel from "@/models/users.model";
 
 export async function GET(req) {
   await dbconnect();
@@ -10,12 +14,30 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const videoId = searchParams.get("videoId");
 
+    console.log("videoId===>", videoId);
     if (!isValidObjectId(videoId)) {
       throw new ApiError("is not valid id", 401);
     }
 
-    const video = await VideoModel.findById(videoId);
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw new ApiError("use was not authorize", 404);
+    }
+    const userId = session._id;
 
+    const video = await VideoModel.findOneAndUpdate(
+      { _id: videoId },
+      {
+        $inc: { views: 1 },
+      },
+      { new: true }
+    ).populate("owner", "avatar fullName");
+
+    const userWatchHistory = await UserModel.findByIdAndUpdate(userId, {
+      $push: {
+        watchHistory: videoId,
+      },
+    });
     if (!video) {
       throw new ApiError("cannot fetch video", 500);
     }

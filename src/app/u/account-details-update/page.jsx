@@ -13,30 +13,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signInSchema } from "@/Schema/userValidation/userSchema";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { accountDetailsUpdateSchema } from "@/Schema/userValidation/userSchema";
+import { useState } from "react";
+import axios from "axios";
 
-export default function SignInPage() {
-  const router = useRouter();
+export default function changePassword() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const form = useForm({
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(accountDetailsUpdateSchema),
   });
 
   const onSubmit = async (data) => {
     console.log(data);
+    setIsSubmitting(true);
     try {
-      const response = await signIn("credentials", {
-        redirect: false,
-        username: data.username,
-        password: data.password,
-      });
-      if (response.url) {
+      const response = await axios.post(`/api/account-details-update`, data);
+      if (response) {
         console.log(response);
-        router.replace("/");
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   return (
@@ -44,12 +42,12 @@ export default function SignInPage() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Full Name</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="Text" {...field} />
+                <Input type="text" placeholder="fullname" {...field} />
               </FormControl>
 
               <FormMessage />
@@ -58,19 +56,25 @@ export default function SignInPage() {
         />
         <FormField
           control={form.control}
-          name="password"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>password</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="password" {...field} />
+                <Input type="email" placeholder="email" {...field} />
               </FormControl>
 
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        {isSubmitting ? (
+          <Button type="submit">Submit</Button>
+        ) : (
+          <Button type="submit" disabled>
+            Submit
+          </Button>
+        )}
       </form>
     </Form>
   );
