@@ -22,28 +22,33 @@ export async function POST(req) {
     const userId = session._id;
 
     if (unLike) {
-      const unlikeVideo = await likeModel.findOneAndDelete({
-        video: videoId,
+      const unDislikeVideo = await likeModel.findOneAndDelete({
+        disLikeVideo: videoId,
         likedBy: userId,
       });
       return NextResponse.json(
-        new ApiResponse(true, "unlike video successfully", 200, unlikeVideo),
+        new ApiResponse(
+          true,
+          "un Dislike video successfully",
+          200,
+          unDislikeVideo
+        ),
         {
           staus: 200,
         }
       );
     } else {
-      const likeVideo = await likeModel.create({
-        video: videoId,
+      const disLikeVideo = await likeModel.create({
+        disLikeVideo: videoId,
         likedBy: userId,
       });
 
-      if (!likeVideo) {
+      if (!disLikeVideo) {
         throw new ApiError("Error on like video ", 500);
       }
 
       return NextResponse.json(
-        new ApiResponse(true, "like video successfully", 200, likeVideo),
+        new ApiResponse(true, "DisLike  video successfully", 200, disLikeVideo),
         {
           staus: 200,
         }

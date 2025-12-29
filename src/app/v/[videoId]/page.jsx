@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { ThumbsDown, ThumbsUp, Unlink } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -10,8 +10,13 @@ function SingleVideoPage() {
   const [video, setVideo] = useState(null);
   const [comment, setComment] = useState([]);
   const [content, setContent] = useState("");
-  const [commentLoading, setCommentLoading] = useState(false);
   const [subscribe, setSubscribe] = useState(false);
+  const [like, setLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [dislike, setDislike] = useState(false);
+  const [disLikeCount, setdisLikeCount] = useState(0);
+
+  const [inc, setInc] = useState(0);
   const { videoId } = useParams();
 
   useEffect(() => {
@@ -24,6 +29,7 @@ function SingleVideoPage() {
         const commentRes = await axios.get(
           `/api/get-video-comments?videoId=${videoId}`
         );
+
         if (res) {
           console.log(res.data.data);
           setVideo(res.data.data);
@@ -41,8 +47,32 @@ function SingleVideoPage() {
     findVideoById();
   }, []);
 
+  useEffect(() => {
+    const getlikeVideos = async () => {
+      const likeRes = await axios.get(
+        `/api/all-like-dislike-video?videoId=${videoId}`
+      );
+
+      if (likeRes.data.data.currentUserLike) {
+        setLike(true);
+      }
+      if (likeRes) {
+        setLikeCount(likeRes.data.data.videoLikes);
+        setdisLikeCount(likeRes.data.data.disLikevideos);
+      }
+
+      if (likeRes.data.data.currentUserdisLike) {
+        setDislike(true);
+      }
+
+      try {
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getlikeVideos();
+  }, []);
   const addComment = async () => {
-    setCommentLoading(true);
     try {
       const res = await axios.post(`/api/add-comment`, {
         content,
@@ -56,7 +86,6 @@ function SingleVideoPage() {
       console.log(error);
     } finally {
       setContent("");
-      setCommentLoading(false);
     }
   };
 
@@ -72,6 +101,42 @@ function SingleVideoPage() {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const toggleLikeVideo = async (unLike) => {
+    try {
+      const response = await axios.post(`/api/video-like`, { videoId, unLike });
+      if (response) {
+        console.log(response.data);
+
+        setLike(!unLike);
+      }
+    } catch (error) {
+      console.error(error?.response?.data);
+    }
+  };
+  if (isLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        Loading video...
+      </div>
+    );
+  }
+
+  const toggleDislikeVideo = async (unLike) => {
+    try {
+      const response = await axios.post(`/api/dislike-video`, {
+        videoId,
+        unLike,
+      });
+      if (response) {
+        console.log(response.data);
+
+        setDislike(!unLike);
+      }
+    } catch (error) {
+      console.error(error?.response?.data);
     }
   };
   if (isLoading) {
@@ -117,16 +182,43 @@ function SingleVideoPage() {
 
           <div className="flex items-center gap-3">
             <div className="flex items-center bg-gray-100 rounded-full overflow-hidden">
-              <button className="flex items-center gap-1 px-4 py-2 hover:bg-gray-200">
-                <ThumbsUp size={18} />
-                <span className="text-sm">12K</span>
-              </button>
+              {like ? (
+                <button
+                  onClick={() => toggleLikeVideo(true)}
+                  className="flex items-center gap-1 px-4 py-2 hover:bg-gray-200"
+                >
+                  <ThumbsUp size={18} color="blue" />
+                  <span className="text-sm">{likeCount}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => toggleLikeVideo(false)}
+                  className="flex items-center gap-1 px-4 py-2 hover:bg-gray-200"
+                >
+                  <ThumbsUp size={18} />
+                  <span className="text-sm">{likeCount}</span>
+                </button>
+              )}
 
               <div className="w-px bg-gray-300 h-6" />
 
-              <button className="px-4 py-2 hover:bg-gray-200">
-                <ThumbsDown size={18} />
-              </button>
+              {dislike ? (
+                <button
+                  onClick={() => toggleDislikeVideo(true)}
+                  className="flex items-center gap-1 px-4 py-2 hover:bg-gray-200"
+                >
+                  <ThumbsDown size={18} color="blue" />
+                  <span className="text-sm">{disLikeCount}</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => toggleDislikeVideo(false)}
+                  className="flex items-center gap-1 px-4 py-2 hover:bg-gray-200"
+                >
+                  <ThumbsDown size={18} />
+                  <span className="text-sm">{disLikeCount}</span>
+                </button>
+              )}
             </div>
 
             {subscribe ? (
