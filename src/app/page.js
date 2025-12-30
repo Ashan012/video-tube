@@ -1,98 +1,72 @@
 "use client";
+
 import axios from "axios";
-import NavBar from "../components/customComp/navBar.jsx";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import NavBar from "@/components/customComp/navBar.jsx";
+import Sidebar from "@/components/customComp/sidebar";
 
 export default function Home() {
   const [video, setVideo] = useState([]);
   const [user, setUser] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const getAllVideos = async () => {
-      try {
-        const res = await axios.get("/api/get-all-videos");
-        setVideo(res.data.data || []);
-      } catch (err) {
-        console.error(err);
-      }
+      const res = await axios.get("/api/get-all-videos");
+      setVideo(res.data.data || []);
     };
 
     const getCurrentUser = async () => {
-      try {
-        const res = await axios.get("/api/get-current-user");
-        setUser(res.data.data.user.email);
-      } catch (err) {
-        console.error(err);
-      }
+      const res = await axios.get("/api/get-current-user");
+      setUser(res.data.data.user.email);
     };
 
     getAllVideos();
     getCurrentUser();
   }, []);
 
-  const getVideoById = (id) => {
-    router.push(`/v/${id}`);
-  };
-
   return (
-    <div className="h-screen flex flex-col">
-      <NavBar username={user} />
+    <div className="min-h-screen flex flex-col">
+      <NavBar username={user} toggleSidebar={() => setSidebarOpen(true)} />
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside className="w-60 border-r px-3 py-4 flex flex-col justify-between">
-          <div className="flex flex-col gap-2 text-sm">
-            {[
-              "Home",
-              "Liked Videos",
-              "History",
-              "My Content",
-              "Collection",
-              "Subscribers",
-            ].map((item) => (
-              <div
-                key={item}
-                className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-2 text-sm">
-            <div className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer">
-              Support
-            </div>
-            <div className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer">
-              Settings
-            </div>
-          </div>
-        </aside>
+      <div className="flex flex-1">
+        <Sidebar
+          items={[
+            "Home",
+            "Liked Videos",
+            "History",
+            "My Content",
+            "Collection",
+            "Subscribers",
+          ]}
+          sidebar={sidebarOpen}
+          setSidebar={setSidebarOpen}
+        />
 
         {/* Videos */}
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="flex flex-wrap gap-6">
+        <main className="flex-1 p-4 overflow-y-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {video.map((c) => (
-              <div
+              <motion.div
                 key={c._id}
-                onClick={() => getVideoById(c._id)}
-                className="w-72 cursor-pointer hover:scale-[1.02] transition"
+                whileHover={{ scale: 1.03 }}
+                onClick={() => router.push(`/v/${c._id}`)}
+                className="cursor-pointer"
               >
-                {/* Thumbnail */}
-                <div className="w-full h-40 rounded overflow-hidden bg-gray-200">
+                <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200">
                   <img
                     src={c.thumbnail}
                     className="w-full h-full object-cover"
                   />
                 </div>
 
-                {/* Info */}
                 <div className="flex gap-3 mt-3">
                   <img
                     src={c.owner.avatar}
-                    className="w-10 h-10 rounded-full object-cover"
+                    className="w-9 h-9 rounded-full object-cover"
                   />
 
                   <div className="text-sm">
@@ -103,7 +77,7 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </main>
