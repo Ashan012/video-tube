@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
-export default function Commentcomp({ comments, videoId, setComment }) {
+export default function Commentcomp({ comments, videoId, setReaction }) {
   const [loading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
 
@@ -11,10 +11,11 @@ export default function Commentcomp({ comments, videoId, setComment }) {
     if (!content.trim()) return;
     try {
       const res = await axios.post(`/api/add-comment`, { content, videoId });
-      if (res)
-        setComment({
-          comment: (prev) => [res.data.data, ...prev],
-        });
+      if (res) console.log(res.data);
+      setReaction((prev) => ({
+        ...prev,
+        comment: [res.data.data, ...prev.comment],
+      }));
     } catch (err) {
       console.error(err);
     } finally {
@@ -71,11 +72,13 @@ export default function Commentcomp({ comments, videoId, setComment }) {
               className="flex gap-3"
             >
               <img
-                src={c.ownerAvatar}
+                src={c.ownerAvatar || c.owner.avatar}
                 className="w-10 h-10 rounded-full object-cover"
               />
               <div>
-                <p className="text-sm font-medium">{c.ownerFullName}</p>
+                <p className="text-sm font-medium">
+                  {c.ownerFullName || c.owner.fullName}
+                </p>
                 <p className="text-sm mt-1">{c.content}</p>
               </div>
             </motion.div>

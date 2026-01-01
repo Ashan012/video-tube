@@ -22,10 +22,17 @@ export async function GET(req) {
 
     const session = await getServerSession(authOptions);
 
+    const viewsUpdate = await VideoModel.findByIdAndUpdate(videoId, {
+      $inc: { views: 1 },
+    });
+    const watchHistory = await UserModel.findByIdAndUpdate(session._id, {
+      $push: { watchHistory: videoId },
+    });
     const videoDetails = await VideoModel.aggregate([
       { $match: { _id: new mongoose.Types.ObjectId(videoId) } },
 
       // Video owner info
+
       {
         $lookup: {
           from: "users",

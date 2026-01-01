@@ -138,7 +138,7 @@ function SingleVideoPage() {
           <Commentcomp
             comments={reaction.comment}
             videoId={videoId}
-            setComment={setReaction}
+            setReaction={setReaction}
           />
         )}
       </div>
