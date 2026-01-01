@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sidebar({ items, sidebar, setSidebar }) {
-  console.log(sidebar);
   return (
     <>
       {/* Desktop Sidebar */}

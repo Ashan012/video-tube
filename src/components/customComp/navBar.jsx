@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Search, Menu } from "lucide-react";
 
-export default function NavBar({ username, toggleSidebar }) {
+export default function NavBar({ toggleSidebar }) {
   const router = useRouter();
 
   return (

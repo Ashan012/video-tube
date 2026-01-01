@@ -26,6 +26,6 @@ const likeSchema = new Schema(
   },
   { timestamps: true }
 );
-const likeModel = mongoose.models.like || mongoose.model("like", likeSchema);
+const likeModel = mongoose.models.Like || mongoose.model("Like", likeSchema);
 
 export default likeModel;
