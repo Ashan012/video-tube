@@ -1,8 +1,10 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar({ items, sidebar, setSidebar }) {
+  const router = useRouter();
   return (
     <>
       {/* Desktop Sidebar */}
@@ -11,9 +13,10 @@ export default function Sidebar({ items, sidebar, setSidebar }) {
           {items.map((item) => (
             <div
               key={item}
-              className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer"
+              onClick={() => router.push(`/feed/${item}`)}
+              className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer capitalize"
             >
-              {item}
+              {item.replace("-", " ")}
             </div>
           ))}
         </div>
@@ -43,10 +46,10 @@ export default function Sidebar({ items, sidebar, setSidebar }) {
               {items.map((item) => (
                 <div
                   key={item}
-                  className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer"
+                  className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer capitalize"
                   onClick={() => setSidebar(false)}
                 >
-                  {item}
+                  {item.replace("-", " ")}
                 </div>
               ))}
             </div>

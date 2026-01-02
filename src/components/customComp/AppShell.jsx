@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import NavBar from "@/components/customComp/navBar.jsx";
-import Sidebar from "@/components/customComp/sidebar";
-import GetAllvideos from "@/components/customComp/GetAllvideos";
+import NavBar from "@/components/customComp/navBar";
+import Sidebar from "./sidebar";
 
-export default function Home() {
+export default function AppShell({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -15,18 +14,19 @@ export default function Home() {
       <div className="flex flex-1">
         <Sidebar
           items={[
-            "Home",
-            "Liked Video",
-            "History",
-            "My Content",
-            "Collection",
-            "Subscribers",
+            "home",
+            "liked-video",
+            "history",
+            "my-content",
+            "collection",
+            "subscribers",
           ]}
           sidebar={sidebarOpen}
           setSidebar={setSidebarOpen}
         />
 
-        <GetAllvideos />
+        {/* Page Content */}
+        <main className="flex-1">{children}</main>
       </div>
     </div>
   );

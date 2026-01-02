@@ -5,7 +5,7 @@ import UserModel from "@/models/users.model";
 import { ApiError } from "@/utils/ApiError";
 import { NextResponse } from "next/server";
 import { ApiResponse } from "@/utils/ApiResponse";
-//import VideoModel from "@/models/vidoes.model";
+import VideoModel from "@/models/vidoes.model";
 
 export async function GET() {
   await dbconnect();
