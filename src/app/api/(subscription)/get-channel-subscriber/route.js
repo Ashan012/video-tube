@@ -6,7 +6,7 @@ import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  dbconnect();
+  await dbconnect();
   try {
     const { searchParams } = new URL(req.url);
 

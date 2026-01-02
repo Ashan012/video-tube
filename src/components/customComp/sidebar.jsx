@@ -4,7 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function Sidebar({ items, sidebar, setSidebar }) {
+  const mobileRedirect = (item) => {
+    setSidebar(false);
+    item == "home" ? router.push(`/`) : router.push(`/feed/${item}`);
+  };
   const router = useRouter();
+
   return (
     <>
       {/* Desktop Sidebar */}
@@ -13,7 +18,9 @@ export default function Sidebar({ items, sidebar, setSidebar }) {
           {items.map((item) => (
             <div
               key={item}
-              onClick={() => router.push(`/feed/${item}`)}
+              onClick={() =>
+                item == "home" ? router.push(`/`) : router.push(`/feed/${item}`)
+              }
               className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer capitalize"
             >
               {item.replace("-", " ")}
@@ -47,7 +54,7 @@ export default function Sidebar({ items, sidebar, setSidebar }) {
                 <div
                   key={item}
                   className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer capitalize"
-                  onClick={() => setSidebar(false)}
+                  onClick={() => mobileRedirect(item)}
                 >
                   {item.replace("-", " ")}
                 </div>

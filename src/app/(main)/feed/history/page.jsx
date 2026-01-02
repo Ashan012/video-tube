@@ -12,7 +12,6 @@ function WatchHistory() {
       try {
         const res = await axios.get("/api/user-watch-history");
         if (res) {
-          console.log(res.data.data.watchHistory);
           setWatchHistory(res.data.data.watchHistory);
         }
       } catch (error) {
@@ -22,15 +21,29 @@ function WatchHistory() {
     getWatchHistory();
   }, []);
 
+  const deleteHistory = (id) => {};
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-4">
-        <h1 className="text-lg font-semibold mb-4">Watch History</h1>
+      <div className="max-w-4xl mx-auto px-4 py-5">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-lg font-semibold">Watch History</h1>
+
+          <div className="flex gap-2">
+            <button className="text-xs px-3 py-1 rounded-full border hover:bg-gray-100">
+              Pause history
+            </button>
+            <button className="text-xs px-3 py-1 rounded-full border text-red-500 hover:bg-red-50">
+              Clear all
+            </button>
+          </div>
+        </div>
 
         {/* Empty State */}
         {watchHistory.length === 0 && (
-          <div className="text-center text-gray-500 mt-10">
-            No watch history yet 📭
+          <div className="flex flex-col items-center justify-center mt-20 text-gray-500">
+            <p className="text-sm">No watch history yet</p>
+            <span className="text-2xl mt-2">📭</span>
           </div>
         )}
 
@@ -39,12 +52,14 @@ function WatchHistory() {
           {watchHistory.map((history, i) => (
             <motion.div
               key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
               whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
               className="flex gap-3 bg-white rounded-xl p-3 shadow-sm cursor-pointer"
             >
               {/* Thumbnail */}
-              <div className="w-32 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-200">
+              <div className="w-32 h-20 shrink-0 rounded-lg overflow-hidden bg-gray-200">
                 <img
                   src={history.thumbnail}
                   alt="thumbnail"
@@ -53,13 +68,23 @@ function WatchHistory() {
               </div>
 
               {/* Info */}
-              <div className="flex flex-col justify-between">
-                <h2 className="text-sm font-medium line-clamp-2">
-                  {history.title}
-                </h2>
+              <div className="flex flex-col justify-between flex-1">
+                <div>
+                  <h2 className="text-sm font-medium line-clamp-2">
+                    {history.title}
+                  </h2>
 
-                <p className="text-xs text-gray-500 mt-1">Watched recently</p>
+                  <p className="text-xs text-gray-500 line-clamp-2 mt-1">
+                    {history.description}
+                  </p>
+                </div>
+
+                <p className="text-[11px] text-gray-400 mt-2">
+                  Watched recently
+                </p>
               </div>
+
+              <div onClick={() => deleteHistory(history._id)}>X</div>
             </motion.div>
           ))}
         </div>

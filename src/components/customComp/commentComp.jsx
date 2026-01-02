@@ -72,12 +72,12 @@ export default function Commentcomp({ comments, videoId, setReaction }) {
               className="flex gap-3"
             >
               <img
-                src={c.ownerAvatar || c.owner.avatar}
+                src={c.ownerAvatar && c.owner.avatar}
                 className="w-10 h-10 rounded-full object-cover"
               />
               <div>
                 <p className="text-sm font-medium">
-                  {c.ownerFullName || c.owner.fullName}
+                  {c.ownerFullName && c.owner.fullName}
                 </p>
                 <p className="text-sm mt-1">{c.content}</p>
               </div>

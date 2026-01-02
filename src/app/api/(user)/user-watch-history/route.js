@@ -19,7 +19,7 @@ export async function GET() {
     const watchHistory = await UserModel.findOne({ _id: userId })
       .select({ watchHistory: { $slice: -10 } })
       .select(
-        "-password -email -fullName -coverImage -updateAt -createdAt -username -avatar -updatedAt"
+        "-password -email -fullName -coverImage  -createdAt -username -avatar -updatedAt"
       )
       .populate({
         path: "watchHistory",
