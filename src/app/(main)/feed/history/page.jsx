@@ -12,7 +12,8 @@ function WatchHistory() {
       try {
         const res = await axios.get("/api/user-watch-history");
         if (res) {
-          setWatchHistory(res.data.data.watchHistory);
+          console.log(res.data.data.watchHistory);
+          setWatchHistory([...res.data.data.watchHistory].reverse());
         }
       } catch (error) {
         console.error(error);

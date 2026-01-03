@@ -1,4 +1,6 @@
 import { dbconnect } from "@/lib/dbconnect";
+import commentModel from "@/models/comments.model";
+import likeModel from "@/models/like.model";
 import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
@@ -16,6 +18,9 @@ export async function DELETE(req) {
     }
 
     const deleteVideo = await VideoModel.findByIdAndDelete(videoId);
+    const deleteLike = await likeModel.deleteMany({ video: videoId });
+    const deletComment = await commentModel.deleteMany({ video: videoId });
+
     if (!deleteVideo) {
       throw new ApiError("error on delete video", 500);
     }

@@ -6,6 +6,7 @@ import { ApiError } from "@/utils/ApiError";
 import { NextResponse } from "next/server";
 import { ApiResponse } from "@/utils/ApiResponse";
 import VideoModel from "@/models/vidoes.model";
+import mongoose from "mongoose";
 
 export async function GET() {
   await dbconnect();
@@ -17,17 +18,13 @@ export async function GET() {
       throw new ApiError("user not found", 404);
     }
     const watchHistory = await UserModel.findOne({ _id: userId })
+
       .select({ watchHistory: { $slice: -10 } })
-      .select(
-        "-password -email -fullName -coverImage  -createdAt -username -avatar -updatedAt"
-      )
       .populate({
         path: "watchHistory",
         select: "title description thumbnail ",
       })
       .lean();
-
-    console.log(watchHistory);
 
     if (!watchHistory) {
       throw new ApiError("failed to watchHistory", 500);
