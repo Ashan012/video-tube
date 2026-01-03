@@ -29,7 +29,7 @@ function GetAllvideos() {
           <motion.div
             key={c._id}
             whileHover={{ scale: 1.03 }}
-            onClick={() => router.push(`/v/${c._id}`)}
+            onClick={() => router.push(`/v/watch/${c._id}`)}
             className="cursor-pointer"
           >
             <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200">

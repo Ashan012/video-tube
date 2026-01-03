@@ -68,6 +68,8 @@ export async function GET() {
           totalSubscribers: 1,
           totalViews: 1,
           videos: {
+            _id: 1,
+            description: 1,
             thumbnail: 1,
             title: 1,
             isPublished: 1,

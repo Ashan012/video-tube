@@ -22,6 +22,12 @@ export default function UploadVideo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      videoFile: "",
+      thumbnail: "",
+    },
     resolver: zodResolver(publishVideoSchema),
   });
 
@@ -37,8 +43,8 @@ export default function UploadVideo() {
     try {
       const res = await axios.post("/api/publish-video", formData);
       console.log(res);
-      if (res) {
-        router.replace(`/v/${res.data.data._id}`);
+      if (res.data) {
+        router.replace(`/v/watch/${res.data.data._id}`);
       }
     } catch (err) {
       console.error(err);

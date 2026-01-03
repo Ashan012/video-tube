@@ -1,8 +1,11 @@
+import { dbconnect } from "@/lib/dbconnect";
 import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
-export async function GET(req) {
+export async function DELETE(req) {
   await dbconnect();
   try {
     const { searchParams } = new URL(req.url);
@@ -12,7 +15,7 @@ export async function GET(req) {
       throw new ApiError("is not valid id", 401);
     }
 
-    const deleteVideo = await VideoModel.findOneAndDelete(videoId);
+    const deleteVideo = await VideoModel.findByIdAndDelete(videoId);
     if (!deleteVideo) {
       throw new ApiError("error on delete video", 500);
     }

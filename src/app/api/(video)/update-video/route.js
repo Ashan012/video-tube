@@ -24,8 +24,8 @@ export async function POST(req) {
 
     if (!thumbnailUpload) throw new ApiError("error on cloudinary upload", 500);
 
-    const updateVideoDetails = await VideoModel.findByIdAndUpdate(
-      videoId,
+    const updateVideoDetails = await VideoModel.findOneAndUpdate(
+      { _id: videoId },
 
       {
         $set: {
@@ -34,35 +34,17 @@ export async function POST(req) {
           description,
         },
       },
-      { new: true }
+
+      { returnDocument: "before" }
     );
 
-    //later on if i don't need updated video on frontend so i utilize this option
-    // const updateVideoDetails = await VideoModel.findOneAndUpdate(
-    //   { _id: videoId },
+    const thumbnailPublicId = updateVideoDetails.thumbnail;
 
-    //   {
-    //     $set: {
-    //       thumbnail: thumbnailUpload.secure_url,
-    //       title,
-    //       description,
-    //     },
-    //   },
+    const publicId = extractPublicId(thumbnailPublicId);
 
-    //   { returnDocument: "before" }
-    // );
-
-    // const thumbnailPublicId = updateVideoDetails.thumbnail;
-
-    // const publicId = extractPublicId(thumbnailPublicId);
-
-    // const deleteCloudinaryOldResource = await cloudinaryDeleteResource(
-    //   publicId
-    // );
-
-    // if (!deleteCloudinaryOldResource) {
-    //   throw new ApiError("failed to delete old resource");
-    // }
+    const deleteCloudinaryOldResource = await cloudinaryDeleteResource(
+      publicId
+    );
 
     if (!updateVideoDetails) {
       throw new ApiError("error on update video details", 500);

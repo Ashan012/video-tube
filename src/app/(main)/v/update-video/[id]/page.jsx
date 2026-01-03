@@ -15,11 +15,23 @@ import { Input } from "@/components/ui/input";
 import { updateVideoSchema } from "@/Schema/videoValidation/videoSchema";
 import axios from "axios";
 import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 
 export default function UpdateVideo() {
+  const { id } = useParams();
+  console.log(id);
+  if (!id) {
+    return null;
+  }
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      thumbnail: "",
+    },
     resolver: zodResolver(updateVideoSchema),
   });
 
@@ -29,14 +41,14 @@ export default function UpdateVideo() {
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("description", data.description);
-
-    if (data.thumbnail) {
-      formData.append("thumbnail", data.thumbnail);
-    }
+    formData.append("thumbnail", data.thumbnail);
+    formData.append("videoId", id);
 
     try {
       const res = await axios.post("/api/update-video", formData);
-      console.log(res);
+      if (res.data) {
+        router.replace(`/v/watch/${id}`);
+      }
     } catch (err) {
       console.error(err);
     } finally {

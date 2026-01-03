@@ -18,7 +18,7 @@ export default function AppShell({ children }) {
             "liked-video",
             "history",
             "my-content",
-            "collection",
+            // "collection",
             "subscribers",
           ]}
           sidebar={sidebarOpen}

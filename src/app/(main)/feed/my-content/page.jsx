@@ -5,8 +5,10 @@ import React, { useEffect, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { motion } from "framer-motion";
 import { Trash2, Edit2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [details, setDetails] = useState({
     like: 0,
     views: 0,
@@ -20,7 +22,7 @@ export default function Dashboard() {
         const res = await axios.get("/api/dashboard");
         if (res) {
           const data = res.data.data;
-
+          console.log(data);
           setDetails({
             like: data.totalLikes,
             views: data.totalViews,
@@ -50,8 +52,7 @@ export default function Dashboard() {
   };
 
   const updateVideo = (videoId) => {
-    // redirect to edit page or show modal
-    console.log("Update video", videoId);
+    router.push(`/v/update-video/${videoId}`);
   };
 
   return (
