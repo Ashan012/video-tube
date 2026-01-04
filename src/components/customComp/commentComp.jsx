@@ -71,21 +71,14 @@ export default function Commentcomp({ comments, videoId, setReaction }) {
               exit={{ opacity: 0, y: -10 }}
               className="flex gap-3"
             >
-              {c.owner.avatar ? (
-                <img
-                  src={c.owner.avatar}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <img
-                  src={c.ownerAvatar}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              )}
+              <img
+                src={c.ownerAvatar ?? c.owner?.avatar}
+                className="w-10 h-10 rounded-full object-cover"
+              />
 
               <div>
                 <p className="text-sm font-medium">
-                  {c.ownerFullName ? c.ownerFullName : c.owner.fullName}
+                  {c.ownerFullName ?? c.owner?.fullName}
                 </p>
                 <p className="text-sm mt-1">{c.content}</p>
               </div>
