@@ -1,123 +1,159 @@
 "use client";
 
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-function getUserProfile() {
+export default function UserChannelProfile() {
   const { username } = useParams();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [userNotFound, setUserNotFound] = useState(false);
   const [data, setData] = useState({
     fullName: "",
     username: "",
-    avatar: "",
-    coverImage: "",
-    subcribedChannel: 0,
+    avatar: null,
+    coverImage: null,
+    subscribers: 0,
     isSubcribed: false,
     userVideo: [],
+    ownerId: "",
   });
+
   useEffect(() => {
+    if (!username) return;
+
     const getProfile = async () => {
-      setIsSubmitting(true);
+      setLoading(true);
       try {
-        const response = await axios.get(
-          `/api/get-user-channel-profile${username}`
+        const res = await axios.get(
+          `/api/get-user-channel-profile?username=${username}`
         );
-        if (response.data) {
-          const data = response.data.data;
+
+        if (res.data) {
+          const d = res.data.data;
+
           setData({
-            fullName: data.fullName,
-            username: data.username,
-            avatar: data.avatar,
-            coverImage: data.coverImage,
-            subcribedChannel: data.subcribedChannel,
-            isSubcribed: data.isSubcribed,
-            userVideo: data.userVideo,
+            fullName: d.fullName,
+            username: d.username,
+            avatar: d.avatar,
+            coverImage: d.coverImage || null,
+            subscribers: d.totalSubscribers,
+            isSubcribed: d.isSubcribed,
+            userVideo: d.userVideo || [],
+            ownerId: d._id,
           });
         }
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.error(err.response?.data);
+        console.error(err.response?.data?.message);
+        if (err.response?.data) {
+          setUserNotFound(true);
+        }
       } finally {
-        setIsSubmitting(false);
+        setLoading(false);
       }
     };
+
     getProfile();
-  }, []);
-  const toggleSubscribe = async (channelOwnerId, unSubscribe) => {
+  }, [username]);
+
+  const toggleSubscribe = async () => {
     try {
-      const res = await axios.post("/api/toggle-subscribe", {
-        channelOwnerId,
-        unSubscribe,
+      await axios.post("/api/toggle-subscribe", {
+        channelOwnerId: data.ownerId,
+        unSubscribe: data.isSubcribed,
       });
-      if (res) {
-        console.log(res);
-        setReaction((prev) => ({
-          ...prev,
-          isSubscribed: !unSubscribe,
-          subscriber: prev.subscriber + (unSubscribe ? -1 : 1),
-        }));
-      }
+
+      setData((prev) => ({
+        ...prev,
+        isSubcribed: !prev.isSubcribed,
+        subscribers: prev.subscribers + (prev.isSubcribed ? -1 : 1),
+      }));
     } catch (err) {
       console.error(err);
     }
   };
 
-  if (!data) return null;
-  return isSubmitting ? (
-    <p>loading....</p>
-  ) : (
-    <div>
-      <div>
-        <div>
-          <img src={data.coverImage} alt="coverImage" />
-        </div>
-        <div>
-          <img src={data.avatar} alt="avatar" />
-          <p>Subscribers {data.subcribedChannel}</p>
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+
+  if (userNotFound) {
+    return <h1>User Not Found</h1>;
+  }
+  if (!data) {
+    return null;
+  }
+  return (
+    <div className="max-w-6xl mx-auto">
+      {/* Cover Image */}
+      <div className="w-full h-40 sm:h-56 bg-gray-300 overflow-hidden">
+        <img
+          src={data.coverImage}
+          className="w-full h-full object-cover"
+          alt="cover"
+        />
+      </div>
+
+      {/* Channel Info */}
+      <div className="px-4 mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Left */}
+        <div className="flex items-center gap-4">
+          <img
+            src={data.avatar}
+            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover"
+            alt="avatar"
+          />
+
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold capitalize">
+              {data.fullName}
+            </h2>
+            <p className="text-gray-600 text-sm">@{data.username}</p>
+            <p className="text-sm text-gray-500">
+              {data.subscribers} subscribers
+            </p>
+          </div>
         </div>
 
+        {/* Right */}
         <button
-          onClick={() => toggleSubscribe(reaction.owner, reaction.isSubscribed)}
-          className={`px-5 py-2 rounded-full text-sm font-medium ${
-            data.isSubcribed ? "bg-gray-200" : "bg-black text-white"
+          onClick={toggleSubscribe}
+          className={`w-full sm:w-auto px-6 py-2 rounded-full text-sm font-medium ${
+            data.isSubcribed ? "bg-gray-200 text-black" : "bg-black text-white"
           }`}
         >
           {data.isSubcribed ? "Subscribed" : "Subscribe"}
         </button>
       </div>
 
-      <div>
-        {data.userVideo.map((c, i) => (
-          <div key={i}>
+      {/* Videos */}
+      <div className="px-4 mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {data.userVideo.length === 0 ? (
+          <p className="text-gray-500">No videos uploaded yet</p>
+        ) : (
+          data.userVideo.map((v) => (
             <div
-              key={c._id}
-              onClick={() => router.push(`/v/watch/${c._id}`)}
+              key={v._id}
+              onClick={() => router.push(`/v/watch/${v._id}`)}
               className="cursor-pointer"
             >
-              <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200">
-                <img src={c.thumbnail} className="w-full h-full object-cover" />
-              </div>
-
-              <div className="flex gap-3 mt-3">
+              <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden">
                 <img
-                  src={data.avatar}
-                  className="w-9 h-9 rounded-full object-cover"
+                  src={v.thumbnail}
+                  className="w-full h-full object-cover"
+                  alt="thumbnail"
                 />
-
-                <div className="text-sm">
-                  <h4 className="font-medium line-clamp-2">{c.title}</h4>
-                  <p className="text-gray-600">{data.fullName}</p>
-                  <p className="text-gray-500 text-xs">
-                    {c.views} views • 44 minutes ago
-                  </p>
-                </div>
               </div>
+
+              <h4 className="mt-2 text-sm font-medium line-clamp-2">
+                {v.title}
+              </h4>
+              <p className="text-xs text-gray-500">{v.views} views</p>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
 }
-
-export default getUserProfile;
