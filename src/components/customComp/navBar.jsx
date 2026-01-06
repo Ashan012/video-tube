@@ -3,9 +3,33 @@
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Search, Menu } from "lucide-react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function NavBar({ toggleSidebar }) {
+  const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const response = await axios.get("/api/get-current-user");
+        if (response) {
+          console.log(response.data);
+          setLoggedIn(true);
+        }
+      } catch (error) {
+        setLoggedIn(false);
+      }
+    };
+    getCurrentUser();
+  }, []);
+
+  // const SignOut = () => {
+  //   console.log(signout);
+  //   signOut();
+  //   // router.replace("/sign-in");
+  // };
 
   return (
     <header className="w-full border-b bg-white sticky top-0 z-50">
@@ -50,10 +74,12 @@ export default function NavBar({ toggleSidebar }) {
           </button>
 
           <button
-            onClick={() => signOut()}
+            onClick={
+              loggedIn ? () => signOut() : () => router.replace("/sign-in")
+            }
             className="text-sm px-3 py-1.5 border rounded hover:bg-gray-100"
           >
-            Logout
+            {loggedIn ? "Logout" : "Login"}
           </button>
         </div>
       </div>

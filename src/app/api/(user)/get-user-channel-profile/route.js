@@ -1,5 +1,6 @@
 import { dbconnect } from "@/lib/dbconnect";
 import UserModel from "@/models/users.model";
+import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
 import { getServerSession } from "next-auth";
@@ -14,8 +15,6 @@ export async function GET(req) {
     if (!username) {
       throw new ApiError("username is missing", 400);
     }
-
-    const session = await getServerSession();
 
     const user = await UserModel.aggregate([
       {
@@ -39,20 +38,35 @@ export async function GET(req) {
           as: "subscribeTo",
         },
       },
+
+      //fetch userVideo
+      {
+        $lookup: {
+          from: "videos",
+          localField: "_id",
+          foreignField: "owner",
+          as: "userVideo",
+        },
+      },
       {
         $addFields: {
           subcribedChannel: {
             $size: "$subscribed",
           },
-          subcribedToChannel: {
-            $size: "$subscribeTo",
-          },
+          // subcribedToChannel: {
+          //   $size: "$subscribeTo",
+          // },
           isSubcribed: {
-            $cond: {
-              if: { $in: [session._id, $subscribers.subscriber] },
-              then: true,
-              else: false,
-            },
+            $in: [
+              new mongoose.Types.ObjectId(userVideo.owner),
+              {
+                $map: {
+                  $input: "$subscribers",
+                  as: "$sub",
+                  in: "$$sub.subscribers",
+                },
+              },
+            ],
           },
         },
       },
@@ -60,12 +74,11 @@ export async function GET(req) {
         $project: {
           fullName: 1,
           username: 1,
-          email: 1,
           avatar: 1,
           coverImage: 1,
           subcribedChannel: 1,
-          subcribedToChanne: 1,
           isSubcribed: 1,
+          userVideo: 1,
         },
       },
     ]);

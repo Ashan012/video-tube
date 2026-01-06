@@ -14,7 +14,7 @@ export const publishVideoSchema = z.object({
 });
 
 export const updateVideoSchema = z.object({
-  thumbnail: thumbnailValidation,
+  thumbnail: thumbnailValidation.optional().nullable(),
   title: titleValidation,
   description: descriptionValidation,
 });

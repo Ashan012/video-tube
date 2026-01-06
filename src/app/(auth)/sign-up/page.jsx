@@ -18,6 +18,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export default function Signup() {
   const router = useRouter();
@@ -42,13 +43,21 @@ export default function Signup() {
       const response = await axios.post(`/api/sign-up`, formData);
 
       if (response.data) {
-        toast.success("Account created 🎉", {
-          description: "Redirecting to login...",
+        console.log("accout created");
+        const login = await signIn("credentials", {
+          redirect: false,
+          username: data.username,
+          password: data.password,
         });
-
-        setTimeout(() => {
-          router.replace("/sign-in");
-        }, 1200);
+        if (login.url) {
+          console.log("login successfully ");
+          toast.success("Account created 🎉", {
+            description: "Redirecting to Home...",
+          });
+          setTimeout(() => {
+            router.replace("/");
+          }, 1200);
+        }
       }
     } catch (error) {
       toast.error("Signup failed ❌", {

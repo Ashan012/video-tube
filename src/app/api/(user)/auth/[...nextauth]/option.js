@@ -10,7 +10,7 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        identifier: { label: "Username/email", type: "text" },
         password: { label: "Password", type: "password" },
       },
 
@@ -20,7 +20,10 @@ export const authOptions = {
         console.log(credentials);
         try {
           const user = await UserModel.findOne({
-            username: credentials.username,
+            $or: [
+              { username: credentials.identifier },
+              { email: credentials.identifier },
+            ],
           });
 
           if (!user) {

@@ -20,7 +20,7 @@ import { toast } from "sonner";
 
 export default function UpdateVideo() {
   const { id } = useParams();
-  console.log(id);
+
   if (!id) {
     return null;
   }
@@ -31,7 +31,7 @@ export default function UpdateVideo() {
     defaultValues: {
       title: "",
       description: "",
-      thumbnail: "",
+      thumbnail: null,
     },
     resolver: zodResolver(updateVideoSchema),
   });
@@ -46,6 +46,7 @@ export default function UpdateVideo() {
     formData.append("videoId", id);
 
     try {
+      console.log("data.thumbnail====>", data.thumbnail);
       const res = await axios.post("/api/update-video", formData);
       if (res.data) {
         toast.success("Update Video Successfully 🎉", {
@@ -109,7 +110,7 @@ export default function UpdateVideo() {
                   <Input
                     type="file"
                     accept="image/*"
-                    onChange={(e) => field.onChange(e.target.files?.[0])}
+                    onChange={(e) => field.onChange(e.target?.files?.[0])}
                   />
                 </FormControl>
                 <FormMessage />

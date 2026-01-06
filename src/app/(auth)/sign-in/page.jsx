@@ -33,7 +33,7 @@ export default function SignInPage() {
     try {
       const response = await signIn("credentials", {
         redirect: false,
-        username: data.username,
+        identifier: data.username,
         password: data.password,
       });
 
@@ -82,7 +82,7 @@ export default function SignInPage() {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter username" {...field} />
+                    <Input placeholder="Enter username or email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
