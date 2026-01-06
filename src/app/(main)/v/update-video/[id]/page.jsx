@@ -16,6 +16,7 @@ import { updateVideoSchema } from "@/Schema/videoValidation/videoSchema";
 import axios from "axios";
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function UpdateVideo() {
   const { id } = useParams();
@@ -47,10 +48,18 @@ export default function UpdateVideo() {
     try {
       const res = await axios.post("/api/update-video", formData);
       if (res.data) {
-        router.replace(`/v/watch/${id}`);
+        toast.success("Update Video Successfully 🎉", {
+          description: "Redirecting to Video...",
+        });
+
+        setTimeout(() => {
+          router.replace(`/v/watch/${res.data.data._id}`);
+        }, 800);
       }
     } catch (err) {
-      console.error(err);
+      toast.error("Update Failed ❌", {
+        description: err?.response?.data?.message || "Something went Wrong",
+      });
     } finally {
       setIsSubmitting(false);
     }

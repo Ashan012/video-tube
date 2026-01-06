@@ -16,6 +16,7 @@ import { publishVideoSchema } from "@/Schema/videoValidation/videoSchema";
 import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function UploadVideo() {
   const router = useRouter();
@@ -44,10 +45,18 @@ export default function UploadVideo() {
       const res = await axios.post("/api/publish-video", formData);
       console.log(res);
       if (res.data) {
-        router.replace(`/v/watch/${res.data.data._id}`);
+        toast.success("Upload Video Successfully 🎉", {
+          description: "Redirecting to Video...",
+        });
+
+        setTimeout(() => {
+          router.replace(`/v/watch/${res.data.data._id}`);
+        }, 800);
       }
     } catch (err) {
-      console.error(err);
+      toast.error("Upload Failed ❌", {
+        description: err?.response?.data?.message || "Something went Wrong",
+      });
     } finally {
       setIsSubmitting(false);
     }
