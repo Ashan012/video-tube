@@ -51,10 +51,10 @@ export default function Signup() {
       const response = await axios.post(`/api/sign-up`, formData);
 
       if (response.data) {
-        console.log("accout created");
+        console.log("account created");
         const login = await signIn("credentials", {
           redirect: false,
-          username: data.username,
+          identifier: data.username,
           password: data.password,
         });
         if (login.url) {
@@ -201,6 +201,15 @@ export default function Signup() {
             </Button>
           </form>
         </Form>
+        <p className="text-sm text-center text-gray-500 mt-6">
+          have an account?
+          <span
+            onClick={() => router.push("/sign-up")}
+            className="text-black font-medium cursor-pointer hover:underline"
+          >
+            Sign in
+          </span>
+        </p>
       </motion.div>
     </div>
   );

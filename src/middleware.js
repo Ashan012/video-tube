@@ -2,7 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 export { default } from "next-auth/middleware";
 
-const protectedRoutes = ["/feed", "/u", "/v"];
+const protectedRoutes = ["/feed", "/u", "/v", "/setting"];
 const authRoutes = ["/sign-in", "/sign-up"];
 
 export async function middleware(request) {
@@ -10,8 +10,8 @@ export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   const isProtected = protectedRoutes.some((route) => {
-      return pathname.startsWith(route);
-    });
+    return pathname.startsWith(route);
+  });
   const isAuthPage = authRoutes.some((route) => {
     return pathname.startsWith(route);
   });

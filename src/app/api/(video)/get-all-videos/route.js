@@ -11,6 +11,7 @@ export async function GET() {
     const allVideo = await VideoModel.find()
       .select("-videoFile")
       .populate("owner", "avatar fullName")
+      .sort({ createdAt: -1 })
       .lean();
 
     if (!allVideo) {
