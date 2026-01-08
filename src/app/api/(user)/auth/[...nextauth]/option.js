@@ -50,6 +50,7 @@ export const authOptions = {
         token.username = user.username;
         token.fullName = user.fullName;
         token.email = user.email;
+        token.avatar = user.avatar;
       }
       return token;
     },
@@ -59,6 +60,7 @@ export const authOptions = {
         session.username = token.username;
         session.fullName = token.fullName;
         session.email = token.email;
+        session.avatar = token.avatar;
       }
       return session;
     },

@@ -8,29 +8,33 @@ import UserModel from "@/models/users.model";
 import { ApiResponse } from "@/utils/ApiResponse";
 
 export async function POST(req) {
-  const session = await getServerSession(authOptions);
   await dbconnect();
 
   try {
     const { oldPassword, newPassword } = await req.json();
-    if (!oldPassword || !oldPassword) {
-      throw new ApiError("error in password request", 401);
+    console.log(oldPassword, newPassword);
+    if (!oldPassword || !newPassword) {
+      throw new ApiError("password is required", 401);
     }
 
-    const userId = session?._id;
+    const session = await getServerSession(authOptions);
+    console.log(session?._id);
+    if (!session) {
+      throw new ApiError("User was not authorize");
+    }
+    const user = await UserModel.findById(session?._id);
 
-    const user = await UserModel.findById(userId);
-
+    console.log("userpassword===>", user);
     if (!user) {
-      throw new ApiError("User was not authorize", 500);
+      throw new ApiError("User was not authorize", 404);
     }
-    const isPasswordValid = bcrypt.compare(oldPassword, user.password);
+    const isPasswordValid = await bcrypt.compare(oldPassword, user.password);
 
     if (!isPasswordValid) {
       throw new ApiError("password was incorrect", 401);
     }
 
-    const encryptPassword = bcrypt.hash(newPassword, 10);
+    const encryptPassword = await bcrypt.hash(newPassword, 10);
     user.password = encryptPassword;
     const changePassword = await user.save({ validateBeforeSave: false });
 

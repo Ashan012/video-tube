@@ -12,13 +12,12 @@ export async function POST(req) {
 
   try {
     const formData = await req.formData();
-
     const data = Object.fromEntries(formData.entries());
 
-    const { avatarImage } = data;
+    const { avatar } = data;
 
-    if (!avatarImage) {
-      throw new ApiError("avatarImage is missing", 404);
+    if (!avatar) {
+      throw new ApiError("avatar is missing", 404);
     }
     const session = await getServerSession(authOptions);
 
@@ -27,7 +26,10 @@ export async function POST(req) {
     }
     const userId = session?._id;
 
-    const avatarUpload = await cloudinaryUpload(avatarImage);
+    if (!userId) {
+      throw new ApiError("user wasnot authorize", 404);
+    }
+    const avatarUpload = await cloudinaryUpload(avatar);
 
     if (!avatarUpload) {
       throw new ApiError(avatarUpload || "avatar upload failed");

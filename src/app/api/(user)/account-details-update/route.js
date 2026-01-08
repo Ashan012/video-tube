@@ -21,19 +21,21 @@ export async function POST(req) {
     }
     const userId = session._id;
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          email,
+          fullName,
+        },
+      },
+      { new: true }
+    );
 
     if (!user) {
       throw new ApiError("user not found", 404);
     }
-    user.email = email;
-    user.fullName = fullName;
 
-    const changeDetails = await user.save({ validateBeforeSave: false });
-
-    if (!changeDetails) {
-      throw new ApiError("Account details update failed", 500);
-    }
     return NextResponse.json(
       new ApiResponse(true, "Account details update successfully", 200),
       { status: 200 }

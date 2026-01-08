@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,64 +16,82 @@ import { accountDetailsUpdateSchema } from "@/Schema/userValidation/userSchema";
 import { useState } from "react";
 import axios from "axios";
 
-export default function changePassword() {
+export default function ChangeNameAndEmail() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const form = useForm({
     resolver: zodResolver(accountDetailsUpdateSchema),
   });
 
   const onSubmit = async (data) => {
-    console.log(data);
     setIsSubmitting(true);
     try {
-      const response = await axios.post(`/api/account-details-update`, data);
-      if (response) {
-        console.log(response);
-      }
+      await axios.post(`/api/account-details-update`, data);
     } catch (error) {
       console.error(error);
     } finally {
       setIsSubmitting(false);
     }
   };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-5 max-w-md mx-auto"
+      >
+        {/* Full Name */}
         <FormField
           control={form.control}
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Full Name</FormLabel>
+              <FormLabel className="text-sm font-medium">Full name</FormLabel>
               <FormControl>
-                <Input type="text" placeholder="fullname" {...field} />
+                <Input
+                  type="text"
+                  placeholder="Enter your full name"
+                  className="rounded-lg"
+                  {...field}
+                />
               </FormControl>
-
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
+
+        {/* Email */}
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-sm font-medium">
+                Email address
+              </FormLabel>
               <FormControl>
-                <Input type="email" placeholder="email" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="rounded-lg"
+                  {...field}
+                />
               </FormControl>
-
-              <FormMessage />
+              <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
-        {isSubmitting ? (
-          <Button type="submit">Submit</Button>
-        ) : (
-          <Button type="submit" disabled>
-            Submit
+
+        {/* Action */}
+        <div className="pt-2">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full rounded-full"
+          >
+            {isSubmitting ? "Updating..." : "Save changes"}
           </Button>
-        )}
+        </div>
       </form>
     </Form>
   );

@@ -78,16 +78,21 @@ export default function NavBar({ toggleSidebar }) {
             Upload
           </button>
 
-          <button
-            onClick={
-              loggedIn
-                ? () => signOut({ callbackUrl: "/sign-in" })
-                : () => router.replace("/sign-in")
-            }
-            className="text-sm px-3 py-1.5 border rounded-full hover:bg-gray-100"
-          >
-            {loggedIn ? "Logout" : "Login"}
-          </button>
+          {loggedIn ? (
+            <button
+              onClick={() => signOut({ callbackUrl: "/sign-in" })}
+              className="text-sm px-3 py-1.5 border rounded-full hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => router.replace("/sign-in")}
+              className="text-sm px-3 py-1.5 border rounded-full hover:bg-gray-100"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
 

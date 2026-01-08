@@ -26,6 +26,14 @@ export default function Signup() {
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+      fullName: "",
+      email: "",
+      avatar: null,
+      coverImage: null,
+    },
   });
 
   const onSubmit = async (data) => {
