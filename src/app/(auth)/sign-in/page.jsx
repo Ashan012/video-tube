@@ -69,7 +69,7 @@ export default function SignInPage() {
       >
         <h1 className="text-2xl font-semibold text-center mb-1">Sign In</h1>
         <p className="text-sm text-gray-500 text-center mb-6">
-          Welcome back to VideoTube
+          Welcome back to BeeTube
         </p>
 
         <Form {...form}>

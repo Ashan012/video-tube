@@ -88,7 +88,7 @@ export default function Signup() {
           Create Account
         </h1>
         <p className="text-sm text-gray-500 text-center mb-6">
-          Join VideoTube today
+          Join BeeTube today
         </p>
 
         <Form {...form}>

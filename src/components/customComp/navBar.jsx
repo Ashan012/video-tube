@@ -46,7 +46,7 @@ export default function NavBar({ toggleSidebar }) {
             onClick={() => router.push("/")}
             className="text-lg font-bold cursor-pointer select-none"
           >
-            VideoTube
+            BeeTube
           </div>
         </div>
 
