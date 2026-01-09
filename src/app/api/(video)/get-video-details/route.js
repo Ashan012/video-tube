@@ -46,6 +46,7 @@ export async function GET(req) {
         $addFields: {
           ownerAvatar: "$ownerDetails.avatar",
           ownerFullName: "$ownerDetails.fullName",
+          ownerUsername: "$ownerDetails.username",
         },
       },
 
@@ -116,6 +117,7 @@ export async function GET(req) {
           createdAt: { $first: "$createdAt" },
           ownerAvatar: { $first: "$ownerAvatar" },
           ownerFullName: { $first: "$ownerFullName" },
+          ownerUsername: { $first: "$ownerUsername" },
           subscribers: { $first: "$subscribers" },
           videoLikes: { $first: "$videoLikes" },
           videoDisLikes: { $first: "$videoDisLikes" },
@@ -177,6 +179,7 @@ export async function GET(req) {
           createdAt: 1,
           ownerAvatar: 1,
           ownerFullName: 1,
+          ownerUsername: 1,
           subcribedChannel: 1,
           isSubcribed: 1,
           videoLikesCount: 1,

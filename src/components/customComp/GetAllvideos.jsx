@@ -29,14 +29,19 @@ function GetAllvideos() {
           <motion.div
             key={c._id}
             whileHover={{ scale: 1.03 }}
-            onClick={() => router.push(`/v/watch/${c._id}`)}
             className="cursor-pointer"
           >
-            <div className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200">
+            <div
+              onClick={() => router.push(`/v/watch/${c._id}`)}
+              className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200"
+            >
               <img src={c.thumbnail} className="w-full h-full object-cover" />
             </div>
 
-            <div className="flex gap-3 mt-3">
+            <div
+              onClick={() => router.push(`/u/${c.owner.username}`)}
+              className="flex gap-3 mt-3"
+            >
               <img
                 src={c.owner.avatar}
                 className="w-9 h-9 rounded-full object-cover"

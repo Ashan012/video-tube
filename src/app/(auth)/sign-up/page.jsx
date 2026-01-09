@@ -64,7 +64,7 @@ export default function Signup() {
           });
           setTimeout(() => {
             router.replace("/");
-          }, 1200);
+          }, 300);
         }
       }
     } catch (error) {

@@ -44,7 +44,7 @@ export default function SignInPage() {
 
         setTimeout(() => {
           router.replace("/");
-        }, 1000);
+        }, 300);
       } else {
         toast.error("Login failed ❌", {
           description: "Invalid username or password",

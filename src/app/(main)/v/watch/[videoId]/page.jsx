@@ -2,12 +2,13 @@
 
 import NavBar from "@/components/customComp/navBar";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Commentcomp from "@/components/customComp/commentComp";
 import LikeandSubscribeSec from "@/components/customComp/LikeandSubscribeSec";
 
 function SingleVideoPage() {
+  const router = useRouter();
   const [reaction, setReaction] = useState({
     title: "",
     description: "",
@@ -23,6 +24,7 @@ function SingleVideoPage() {
     comment: [],
     avatar: "",
     fullName: "",
+    username: "",
     createdAt: "",
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +59,7 @@ function SingleVideoPage() {
             comment: data.videoComments,
             avatar: data.ownerAvatar,
             fullName: data.ownerFullName,
+            username: data.ownerUsername,
             createdAt: data.createdAt,
             owner: data.owner,
           });
@@ -96,7 +99,10 @@ function SingleVideoPage() {
 
           {/* Channel Info + Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
-            <div className="flex items-center gap-3">
+            <div
+              onClick={() => router.push(`/u/${reaction.username} `)}
+              className="flex items-center gap-3 "
+            >
               <img
                 src={reaction.avatar || null}
                 className="w-10 h-10 rounded-full object-cover"

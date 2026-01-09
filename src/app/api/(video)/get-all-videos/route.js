@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const allVideo = await VideoModel.find()
       .select("-videoFile")
-      .populate("owner", "avatar fullName")
+      .populate("owner", "avatar fullName username")
       .sort({ createdAt: -1 })
       .lean();
 
