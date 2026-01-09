@@ -204,7 +204,7 @@ export default function Signup() {
         <p className="text-sm text-center text-gray-500 mt-6">
           have an account?
           <span
-            onClick={() => router.push("/sign-up")}
+            onClick={() => router.push("/sign-in")}
             className="text-black font-medium cursor-pointer hover:underline"
           >
             Sign in
