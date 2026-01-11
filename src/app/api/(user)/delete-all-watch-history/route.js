@@ -8,7 +8,7 @@ import { ApiResponse } from "@/utils/ApiResponse";
 import VideoModel from "@/models/vidoes.model";
 import mongoose from "mongoose";
 
-export async function GET() {
+export async function DELETE() {
   await dbconnect();
   try {
     const session = await getServerSession(authOptions);
@@ -17,25 +17,19 @@ export async function GET() {
     if (!userId) {
       throw new ApiError("user not found", 404);
     }
-    const watchHistory = await UserModel.findOne({ _id: userId })
-      .select({ watchHistory: { $slice: -10 } })
-      .populate({
-        path: "watchHistory",
-        select: "title description thumbnail",
-      })
-      .lean();
 
-    if (!watchHistory) {
+    const deleteWatchHistory = await UserModel.findByIdAndUpdate(userId, {
+      $set: {
+        watchHistory: [],
+      },
+    }).lean();
+
+    if (!deleteWatchHistory) {
       throw new ApiError("failed to watchHistory", 500);
     }
 
     return NextResponse.json(
-      new ApiResponse(
-        true,
-        "fetch watchHistory successfully",
-        200,
-        watchHistory
-      )
+      new ApiResponse(true, "delete watchHistory successfully", 200)
     );
   } catch (error) {
     console.error(error?.message || error);

@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   await dbconnect();
   try {
-    const allVideo = await VideoModel.find()
+    const allVideo = await VideoModel.find({ isPublished: true })
       .select("-videoFile")
       .populate("owner", "avatar fullName username")
       .sort({ createdAt: -1 })

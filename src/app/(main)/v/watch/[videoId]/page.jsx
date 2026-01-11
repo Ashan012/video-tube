@@ -98,7 +98,10 @@ function SingleVideoPage() {
           <h1 className="text-xl font-semibold">{reaction.title}</h1>
 
           {/* Channel Info + Actions */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
+          <div
+            title="Profile"
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4"
+          >
             <div
               onClick={() => router.push(`/u/${reaction.username} `)}
               className="flex items-center gap-3 "

@@ -12,7 +12,6 @@ function WatchHistory() {
       try {
         const res = await axios.get("/api/user-watch-history");
         if (res) {
-          console.log(res.data.data.watchHistory);
           setWatchHistory([...res.data.data.watchHistory].reverse());
         }
       } catch (error) {
@@ -22,7 +21,19 @@ function WatchHistory() {
     getWatchHistory();
   }, []);
 
-  const deleteHistory = (id) => {};
+  const deleteAllHistory = async () => {
+    try {
+      const response = await axios.delete(`/api/delete-all-watch-history`);
+
+      if (response) {
+        console.log(response);
+        setWatchHistory([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-5">
@@ -31,10 +42,13 @@ function WatchHistory() {
           <h1 className="text-lg font-semibold">Watch History</h1>
 
           <div className="flex gap-2">
-            <button className="text-xs px-3 py-1 rounded-full border hover:bg-gray-100">
+            {/* <button className="text-xs px-3 py-1 rounded-full border hover:bg-gray-100">
               Pause history
-            </button>
-            <button className="text-xs px-3 py-1 rounded-full border text-red-500 hover:bg-red-50">
+            </button> */}
+            <button
+              className="text-xs px-3 py-1 rounded-full border text-red-500 hover:bg-red-50"
+              onClick={deleteAllHistory}
+            >
               Clear all
             </button>
           </div>
@@ -84,8 +98,6 @@ function WatchHistory() {
                   Watched recently
                 </p>
               </div>
-
-              <div onClick={() => deleteHistory(history._id)}>X</div>
             </motion.div>
           ))}
         </div>

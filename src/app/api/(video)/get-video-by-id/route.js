@@ -2,7 +2,7 @@ import { dbconnect } from "@/lib/dbconnect";
 import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
-import { isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../../(user)/auth/[...nextauth]/option";
@@ -26,21 +26,27 @@ export async function GET(req) {
     const userId = session._id;
 
     const video = await VideoModel.findOneAndUpdate(
-      { _id: videoId },
+      { _id: videoId, isPublished: true },
+
       {
         $inc: { views: 1 },
       },
       { new: true }
-    ).populate("owner", "avatar fullName");
+    )
+      .populate("owner", "avatar fullName")
+      .lean();
 
-    const userWatchHistory = await UserModel.findByIdAndUpdate(userId, {
-      $push: {
-        watchHistory: videoId,
-      },
-    });
     if (!video) {
       throw new ApiError("cannot fetch video", 500);
     }
+
+    const userWatchHistory = await UserModel.findByIdAndUpdate(userId, {
+      $push: {
+        watchHistory: {
+          $each: [videoId],
+        },
+      },
+    });
     return NextResponse.json(
       new ApiResponse(true, "get video successfully", 200, video),
       {

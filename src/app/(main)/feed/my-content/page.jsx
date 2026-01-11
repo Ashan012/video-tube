@@ -16,6 +16,14 @@ export default function Dashboard() {
     video: [],
   });
 
+  const links = [
+    "Status",
+    "Thumbnail",
+    "Title",
+    "Views",
+    "Upload Date",
+    "Actions",
+  ];
   useEffect(() => {
     const getDashboard = async () => {
       try {
@@ -51,6 +59,24 @@ export default function Dashboard() {
     }
   };
 
+  const togglePublistStatus = async (videoId, status, index) => {
+    try {
+      const response = await axios.post(
+        `/api/toggle-publish-status?videoId=${videoId}&status=${status}`
+      );
+      if (response) {
+        const data = response.data.data;
+        setDetails((prev) => ({
+          ...prev,
+          video: prev.video.map((content, i) =>
+            i == index ? { ...content, isPublished: data } : content
+          ),
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const updateVideo = (videoId) => {
     router.push(`/v/update-video/${videoId}`);
   };
@@ -78,37 +104,36 @@ export default function Dashboard() {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                Status
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                Thumbnail
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                Title
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                Views
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                Upload Date
-              </th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-600">
-                Actions
-              </th>
+              {links.map((c, i) => (
+                <th
+                  key={i}
+                  className="px-4 py-2 text-left text-sm font-medium text-gray-600"
+                >
+                  {c}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {details.video.map((content, i) => (
+            {details.video.map((content, index) => (
               <motion.tr
-                key={i}
+                key={index}
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
                 className="hover:bg-gray-50"
               >
                 <td className="px-4 py-3 flex items-center gap-2">
-                  <Switch checked={content.isPublished} />
+                  <Switch
+                    checked={content.isPublished}
+                    onClick={() =>
+                      togglePublistStatus(
+                        content._id,
+                        !content.isPublished,
+                        index
+                      )
+                    }
+                  />
                   <span className="text-sm">
                     {content.isPublished ? "Published" : "Unpublished"}
                   </span>

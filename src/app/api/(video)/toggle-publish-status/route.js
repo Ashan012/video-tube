@@ -1,12 +1,16 @@
+import { dbconnect } from "@/lib/dbconnect";
 import VideoModel from "@/models/vidoes.model";
 import { ApiError } from "@/utils/ApiError";
 import { ApiResponse } from "@/utils/ApiResponse";
+import { isValidObjectId } from "mongoose";
+import { NextResponse } from "next/server";
 
-export async function GET(req) {
+export async function POST(req) {
   await dbconnect();
   try {
     const { searchParams } = new URL(req.url);
     const videoId = searchParams.get("videoId");
+    const status = searchParams.get("status");
 
     if (!isValidObjectId(videoId)) {
       throw new ApiError("is not valid id", 401);
@@ -16,11 +20,11 @@ export async function GET(req) {
       videoId,
       {
         $set: {
-          isPublished: !isPublished,
+          isPublished: status,
         },
       },
       { new: true }
-    );
+    ).lean();
     if (!toggleStatus) {
       throw new ApiError("error on toggle status change", 500);
     }
