@@ -33,6 +33,7 @@ export default function UserChannelProfile() {
 
         if (res.data) {
           const d = res.data.data;
+          console.log(d);
 
           setData({
             fullName: d.fullName,

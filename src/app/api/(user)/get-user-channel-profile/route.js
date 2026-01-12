@@ -65,7 +65,7 @@ export async function GET(req) {
                 $map: {
                   input: "$subscribers",
                   as: "sub",
-                  in: "$$sub.subscribers",
+                  in: "$$sub.subscriber",
                 },
               },
             ],
