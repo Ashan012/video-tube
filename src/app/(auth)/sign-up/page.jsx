@@ -178,7 +178,7 @@ export default function Signup() {
               name="coverImage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cover Image (optional)</FormLabel>
+                  <FormLabel>Cover Image</FormLabel>
                   <FormControl>
                     <Input
                       type="file"
