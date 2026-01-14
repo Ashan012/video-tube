@@ -1,8 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import NavBar from "@/components/customComp/navBar.jsx";
-import Sidebar from "@/components/customComp/sidebar";
 import GetAllvideos from "@/components/customComp/GetAllvideos";
 
 export default function Home() {
