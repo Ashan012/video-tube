@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { useState } from "react";
+import { GuestLogin } from "@/components/customComp/GuestLogin";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -71,7 +72,15 @@ export default function SignInPage() {
         <p className="text-sm text-gray-500 text-center mb-6">
           Welcome back to BeeTube
         </p>
-
+        <GuestLogin
+          setIsSubmitting={setIsSubmitting}
+          isSubmitting={isSubmitting}
+        />
+        <div className="my-4 flex items-center gap-2">
+          <hr className="flex-1 border-gray-300" />
+          <span className="text-gray-400 text-sm">or</span>
+          <hr className="flex-1 border-gray-300" />
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Username */}
@@ -118,7 +127,6 @@ export default function SignInPage() {
             </Button>
           </form>
         </Form>
-
         {/* Footer */}
         <p className="text-sm text-center text-gray-500 mt-6">
           Don&apos;t have an account?{" "}
