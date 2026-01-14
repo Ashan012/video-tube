@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
 export default function Commentcomp({ comments, videoId, setReaction }) {
+  console.log("comments===>", comments);
   const [loading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
 
@@ -26,7 +27,9 @@ export default function Commentcomp({ comments, videoId, setReaction }) {
   if (!comments) return null;
   return (
     <div className="mt-8">
-      <h2 className="text-lg font-semibold mb-4">{comments.length} Comments</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        {Object.keys(comments[0]).length == 0 ? 0 : comments.length} Comments
+      </h2>
 
       {/* Add Comment */}
       <div className="flex gap-3 items-start mb-6">

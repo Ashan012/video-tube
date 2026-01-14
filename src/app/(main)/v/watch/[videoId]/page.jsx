@@ -21,7 +21,7 @@ function SingleVideoPage() {
     subscriber: 0,
     likeCount: 0,
     disLikeCount: 0,
-    comment: [],
+    comment: [{}],
     avatar: "",
     fullName: "",
     username: "",
