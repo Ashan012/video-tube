@@ -15,18 +15,35 @@ import { Input } from "@/components/ui/input";
 import { accountDetailsUpdateSchema } from "@/Schema/userValidation/userSchema";
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function ChangeNameAndEmail() {
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
+    defaultValues: {
+      email: "",
+      fullName: "",
+    },
     resolver: zodResolver(accountDetailsUpdateSchema),
   });
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      await axios.post(`/api/account-details-update`, data);
+      const res = await axios.post(`/api/account-details-update`, data);
+      if (res) {
+        const data = res.data.data.username;
+        console.log(res.data.data);
+        if (data) {
+          toast.success("Fullname and email change successfully");
+          setTimeout(() => {
+            router.push(`/u/${data}`);
+          }, 300);
+        }
+      }
     } catch (error) {
       console.error(error);
     } finally {

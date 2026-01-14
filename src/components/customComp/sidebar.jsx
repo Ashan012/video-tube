@@ -4,11 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 export default function Sidebar({ items, sidebar, setSidebar }) {
-  const mobileRedirect = (item) => {
-    setSidebar(false);
-    item == "home" ? router.push(`/`) : router.push(`/feed/${item}`);
-  };
   const router = useRouter();
+  const Redirect = (item, mobileRedirect) => {
+    if (mobileRedirect) {
+      setSidebar(false);
+    }
+
+    if (item == "home") {
+      router.push(`/`);
+    } else if (item == "setting") {
+      router.push(`/setting/account-update`);
+    } else {
+      router.push(`/feed/${item}`);
+    }
+  };
 
   return (
     <>
@@ -18,9 +27,7 @@ export default function Sidebar({ items, sidebar, setSidebar }) {
           {items.map((item) => (
             <div
               key={item}
-              onClick={() =>
-                item == "home" ? router.push(`/`) : router.push(`/feed/${item}`)
-              }
+              onClick={() => Redirect(item, false)}
               className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer capitalize"
             >
               {item.replace("-", " ")}
@@ -54,7 +61,7 @@ export default function Sidebar({ items, sidebar, setSidebar }) {
                 <div
                   key={item}
                   className="px-3 py-2 rounded hover:bg-gray-100 cursor-pointer capitalize"
-                  onClick={() => mobileRedirect(item)}
+                  onClick={() => Redirect(item, true)}
                 >
                   {item.replace("-", " ")}
                 </div>

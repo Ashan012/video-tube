@@ -36,11 +36,16 @@ export default function ChangeAvatar() {
 
     setIsSubmitting(true);
     try {
-      const response = await axios.post(`/api/change-avatar-image`, formData);
+      const res = await axios.post(`/api/change-avatar-image`, formData);
 
-      if (response.data) {
-        toast.success("Avatar updated successfully");
-        router.push("/");
+      if (res) {
+        const data = res.data.data.username;
+        if (data) {
+          toast.success("avatar upload successfully");
+          setTimeout(() => {
+            router.push(`/u/${data}`);
+          }, 300);
+        }
       }
     } catch (error) {
       toast.error("Avatar update failed", {

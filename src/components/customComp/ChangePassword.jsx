@@ -24,6 +24,10 @@ export default function ChangePassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
+    defaultValues: {
+      newPassword: "",
+      oldPassword: "",
+    },
     resolver: zodResolver(changePasswordSchema),
   });
 

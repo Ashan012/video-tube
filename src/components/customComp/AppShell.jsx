@@ -20,6 +20,7 @@ export default function AppShell({ children }) {
             "my-content",
             // "collection",
             "subscribers",
+            "setting",
           ]}
           sidebar={sidebarOpen}
           setSidebar={setSidebarOpen}

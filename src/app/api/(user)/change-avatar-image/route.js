@@ -35,15 +35,11 @@ export async function POST(req) {
       throw new ApiError(avatarUpload || "avatar upload failed");
     }
 
-    const changeAvatar = await UserModel.findByIdAndUpdate(
-      userId,
-      {
-        $set: {
-          avatar: avatarUpload.secure_url,
-        },
+    const changeAvatar = await UserModel.findByIdAndUpdate(userId, {
+      $set: {
+        avatar: avatarUpload.secure_url,
       },
-      { new: true }
-    );
+    }).select("username");
     if (!changeAvatar) {
       throw new ApiError("User not found ", 500);
     }
