@@ -35,7 +35,11 @@ function GetAllvideos() {
               onClick={() => router.push(`/v/watch/${c._id}`)}
               className="w-full aspect-video rounded-lg overflow-hidden bg-gray-200"
             >
-              <img src={c.thumbnail} className="w-full h-full object-cover" />
+              <img
+                src={c.thumbnail}
+                className="w-full h-full object-cover"
+                alt="thumbnail"
+              />
             </div>
 
             <div
