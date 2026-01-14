@@ -24,6 +24,10 @@ export async function POST(req) {
     }
     const user = await UserModel.findById(session?._id);
 
+    console.log(user.username);
+    if (user.username == "guest") {
+      throw new ApiError("guest user can't change password", 401);
+    }
     console.log("userpassword===>", user);
     if (!user) {
       throw new ApiError("User was not authorize", 404);
