@@ -1,10 +1,10 @@
 "use client";
 
-import NavBar from "@/components/customComp/navBar";
+import NavBar from "@/components/customComp/NavBar";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import Commentcomp from "@/components/customComp/commentComp";
+import Commentcomp from "@/components/customComp/CommentComp";
 import LikeandSubscribeSec from "@/components/customComp/LikeandSubscribeSec";
 
 function SingleVideoPage() {

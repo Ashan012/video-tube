@@ -1,8 +1,8 @@
 "use client";
 
-import ChangeNameAndEmail from "@/components/customComp/changeNameAndEmail";
+import ChangeNameAndEmail from "@/components/customComp/ChangeNameAndEmail";
 import ChangePassword from "@/components/customComp/ChangePassword";
-import ChangeAvatar from "@/components/customComp/chnageAvatar";
+import ChangeAvatar from "@/components/customComp/ChnageAvatar";
 
 export default function ChangeDetails() {
   return (

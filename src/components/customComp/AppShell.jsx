@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import NavBar from "@/components/customComp/navBar";
-import Sidebar from "./sidebar";
+import NavBar from "@/components/customComp/NavBar";
+import Sidebar from "./Sidebar";
 
 export default function AppShell({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
